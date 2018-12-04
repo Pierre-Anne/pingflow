@@ -5,9 +5,12 @@ const port = process.env.PORT || 3000;
 const db = new sqlite3.Database('./pingflow.db');
 
 exports.get_comments = function (req, res) {
+	console.log('test');
+	console.log(req.query.id);
+
 	try{
-		let sql = 'SELECT * FROM comments';
-		db.all(sql, (err, comments) => {
+		let sql = 'SELECT * FROM comments WHERE cityId = ?';
+		db.all(sql, [req.query.id], (err, comments) => {
 			if (err) {
 				return res.status(400).json(err);
 			}
