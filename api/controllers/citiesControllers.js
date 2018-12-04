@@ -22,18 +22,24 @@ exports.get_cities = function(req, res) {
 exports.set_cities = function(req, res) {
 	try{
 		let sql = 'SELECT id FROM cities WHERE name = ?';
-		db.all(sql, req.query.cityName, (err, usersId) => {
+		db.all(sql, req.body.cityName, (err, usersId) => {
 			if(err) {
 				return res.status(400).json(err);
 			}
 			if(usersId.length > 0) {
 				return res.status(400).json({msg:'this city already existed'});
 			} else {
-				db.run('INSERT INTO cities (name, country) VALUES (?, ?)', [req.query.cityName, req.query.country], (err, city) => {
+				db.run('INSERT INTO cities (name, country) VALUES (?, ?)', [req.body.cityName, req.body.country], (err, city) => {
 					if (err) {
 						return res.status(400).json(err);
 					}
-					return res.status(200).json(city);
+					let sql = 'SELECT * FROM cities WHERE name = ?';
+					db.all(sql, req.body.cityName, (err, city) => {
+						if(err) {
+							return res.status(400).json(err);
+						}
+						return res.status(200).json(city)
+					});
 				});
 			}
 		});
